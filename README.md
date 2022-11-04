@@ -20,10 +20,10 @@ Or
     source-path: iso
     config-file: metanorma.yml
     agree-to-terms: true
-	output-dir: site
-	no-install-fonts: false
-	continue-without-fonts: false
-	use-bundler: false
+    output-dir: site
+    no-install-fonts: false
+    continue-without-fonts: false
+    use-bundler: false
 ```
 
 The action expects that metanorma-cli is already installed.
