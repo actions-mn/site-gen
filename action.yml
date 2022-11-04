@@ -2,16 +2,18 @@ name: 'metanorma-site-generate'
 description: 'Perform metanorma site generate'
 inputs:
   source-path:
-    description: 'Source path, usually directory where configuration (manifest) file is'
+    description: Source path, usually directory where configuration
+      (manifest) file is
     default: '.'
   output-dir:
-    description: 'Output directory for generated site'
+    description: Output directory for generated site
     default: site
   config-file:
     description: 'Metanorma configuration (mainfest) file'
     default: metanorma.yml
   agree-to-terms:
-    description: 'Agree / Disagree with all third-party licensing terms presented (WARNING: do know what you are agreeing with!)'
+    description: 'Agree / Disagree with all third-party licensing terms
+      presented (WARNING: do know what you are agreeing with!)'
     default: '' # false
   no-install-fonts:
     description: 'Skip the font installation process'
