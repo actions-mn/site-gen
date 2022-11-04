@@ -1,0 +1,42 @@
+name: 'metanorma-site-generate'
+description: 'Perform metanorma site generate'
+inputs:
+  source-path:
+    description: 'Source path, usually directory where configuration (manifest) file is'
+    default: '.'
+  output-dir:
+    description: 'Output directory for generated site'
+    default: site
+  config-file:
+    description: 'Metanorma configuration (mainfest) file'
+    default: metanorma.yml
+  agree-to-terms:
+    description: 'Agree / Disagree with all third-party licensing terms presented (WARNING: do know what you are agreeing with!)'
+    default: '' # false
+  no-install-fonts:
+    description: 'Skip the font installation process'
+    default: '' # false
+  continue-without-fonts:
+    description: 'Continue processing even when fonts are missing'
+    default: '' # false
+  use-bundler:
+    description: 'Run in bundler'
+    default: '' # false
+  # stylesheet:
+  #   description: 'Stylesheet file path for rendering HTML page'
+  # template-dir:
+  #   description: 'Liquid template directory to render site design'
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        cd ${{ inputs.source-path }}
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
+            metanorma site generate .                                                     \
+            -o ${{ inputs.output-dir }}                                                   \
+            -c ${{ inputs.config-file }}                                                  \
+            ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
+            ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
+            ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts             \
