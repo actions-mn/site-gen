@@ -21,6 +21,9 @@ inputs:
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
+  strict:
+    description: 'Run metanorma in strict mode'
+    default: '' # false
   use-bundler:
     description: 'Run in bundler'
     default: '' # false
@@ -35,10 +38,11 @@ runs:
     - shell: bash
       run: |
         cd ${{ inputs.source-path }}
-        ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}         \
-          metanorma site generate .                                        \
-          -o ${{ inputs.output-dir }}                                      \
-          -c ${{ inputs.config-file }}                                     \
-          ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms    \
-          ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts\
+        ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}          \
+          metanorma site generate .                                         \
+          ${{ inputs.strict && '--strict' || '' }}                          \
+          -o ${{ inputs.output-dir }}                                       \
+          -c ${{ inputs.config-file }}                                      \
+          ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms     \
+          ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts \
           ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts
