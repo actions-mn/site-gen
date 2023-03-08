@@ -44,4 +44,4 @@ jobs:
 
     - uses: andstor/file-existence-action@v1
       with:
-        files: iso/site/index.html
+        files: iso/_site/index.html
