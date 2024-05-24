@@ -6,18 +6,18 @@ inputs:
       (manifest) file is
     default: '.'
   output-dir:
-    description: Output directory for generated site
+    description: Output directory for the generated site
     default: _site
   config-file:
-    description: 'Metanorma configuration (mainfest) file'
+    description: 'Metanorma configuration (manifest) file'
     default: metanorma.yml
   agree-to-terms:
     description: 'Agree / Disagree with all third-party licensing terms
       presented (WARNING: do know what you are agreeing with!)'
     default: '' # false
-  no-install-fonts:
-    description: 'Skip the font installation process'
-    default: '' # false
+  install-fonts:
+    description: 'Install missing fonts'
+    default: 'false'
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
@@ -38,11 +38,11 @@ runs:
     - shell: bash
       run: |
         cd ${{ inputs.source-path }}
-        ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}          \
-          metanorma site generate .                                         \
-          ${{ inputs.strict && '--strict' || '' }}                          \
-          -o ${{ inputs.output-dir }}                                       \
-          -c ${{ inputs.config-file }}                                      \
-          ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms     \
-          ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts \
+        ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
+          metanorma site generate .                                      \
+          ${{ inputs.strict && '--strict' || '' }}                       \
+          -o ${{ inputs.output-dir }}                                    \
+          -c ${{ inputs.config-file }}                                   \
+          ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms  \
+          ${{ inputs.install-fonts && '--' || '--no-' }}install-fonts \
           ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts
