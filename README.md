@@ -1,3 +1,4 @@
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/actions-mn/site-gen)
 [![test](https://github.com/actions-mn/site-gen/actions/workflows/test.yml/badge.svg)](https://github.com/actions-mn/site-gen/actions/workflows/test.yml)
 
 # site-gen
