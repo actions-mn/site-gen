@@ -24,6 +24,9 @@ inputs:
   strict:
     description: 'Run metanorma in strict mode'
     default: '' # false
+  progress:
+    description: 'Display progress related logs'
+    default: 'false' # false
   use-bundler:
     description: 'Run in bundler'
     default: '' # false
@@ -35,14 +38,51 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      run: |
-        cd ${{ inputs.source-path }}
-        ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
-          metanorma site generate .                                      \
-          ${{ inputs.strict && '--strict' || '' }}                       \
-          -o ${{ inputs.output-dir }}                                    \
-          -c ${{ inputs.config-file }}                                   \
-          ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms  \
-          ${{ inputs.install-fonts && '--' || '--no-' }}install-fonts \
-          ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts
+  - shell: bash
+    run: |
+      verlte() {
+        printf '%s\n' "$1" "$2" | sort -C -V
+      }
+      verlt() {
+        ! verlte "$2" "$1"
+      }
+
+      METANORMA_VERSION=$(${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} metanorma --version | head -1 | cut -d' ' -f2)
+      METANORMA_LEGACY=$(verlt ${METANORMA_VERSION} 1.10.0 && echo "true" || echo "false")
+      METANORMA_FLAGS=""
+
+      if [ "${{ inputs.strict }}" == "true" ]; then
+        METANORMA_FLAGS+="--strict"
+      fi
+      if [ "${{ inputs.progress }}" != "true" ]; then
+        METANORMA_FLAGS+=" --no-progress"
+      fi
+      if [ "${{ inputs.agree-to-terms }}" == "true" ]; then
+        METANORMA_FLAGS+=" --agree-to-terms"
+      fi
+
+      if [ "${{ inputs.install-fonts }}" != 'true' ]; then
+        METANORMA_FLAGS+=" --no-install-fonts"
+      elif [ "$METANORMA_LEGACY" == "true" ]; then
+        METANORMA_FLAGS+=" --no-no-install-fonts"
+      else
+        METANORMA_FLAGS+=" --install-fonts"
+      fi
+
+      if [ "${{ inputs.continue-without-fonts }}" != 'true' ]; then
+        METANORMA_FLAGS+=" --no-continue-without-fonts"
+      elif [ "$METANORMA_LEGACY" == "true" ]; then
+        METANORMA_FLAGS+=" --no-no-continue-without-fonts"
+      else
+        METANORMA_FLAGS+=" --continue-without-fonts"
+      fi
+      echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
+
+  - shell: bash
+    run: |
+      cd ${{ inputs.source-path }}
+      ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
+        metanorma site generate .                                      \
+        -o ${{ inputs.output-dir }}                                    \
+        -c ${{ inputs.config-file }}                                   \
+        ${{ env.METANORMA_FLAGS }}
