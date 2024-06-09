@@ -14,11 +14,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: |
           sudo apt-get install yamllint
           yamllint action.yml
+
   test-site-gen:
     name: Test ./site-gen/ action on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -27,21 +28,64 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
-        repository: metanorma/mn-samples-iso
-        path: iso
+        repository: metanorma/mn-samples-cc
+        path: cc
 
     - uses: actions-mn/setup@main
 
     - uses: ./
       with:
-        source-path: iso
+        source-path: cc
         config-file: metanorma.yml
         agree-to-terms: true
 
     - uses: andstor/file-existence-action@v1
       with:
-        files: iso/_site/index.html
+        files: cc/_site/index.html
+
+  test-before-1-10:
+    runs-on: ubuntu-latest
+    container:
+      image: metanorma/metanorma:1.9.7
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/checkout@v4
+      with:
+        repository: metanorma/mn-samples-cc
+        path: cc
+
+    - uses: ./
+      with:
+        source-path: cc
+        agree-to-terms: true
+        progress: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: cc/_site/index.html
+
+  test-1-10:
+    runs-on: ubuntu-latest
+    container:
+      image: metanorma/metanorma:1.10.0
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/checkout@v4
+      with:
+        repository: metanorma/mn-samples-cc
+        path: cc
+
+    - uses: ./
+      with:
+        source-path: cc
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: cc/_site/index.html
