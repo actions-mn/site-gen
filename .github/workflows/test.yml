@@ -43,11 +43,11 @@ jobs:
         config-file: metanorma.yml
         agree-to-terms: true
 
-    - uses: andstor/file-existence-action@v1
+    - uses: andstor/file-existence-action@v3
       with:
         files: cc/_site/index.html
 
-  test-before-1-10:
+  test-prior-1-10:
     runs-on: ubuntu-latest
     container:
       image: metanorma/metanorma:1.9.7
@@ -65,7 +65,7 @@ jobs:
         agree-to-terms: true
         progress: true
 
-    - uses: andstor/file-existence-action@v1
+    - uses: andstor/file-existence-action@v3
       with:
         files: cc/_site/index.html
 
@@ -86,6 +86,6 @@ jobs:
         source-path: cc
         agree-to-terms: true
 
-    - uses: andstor/file-existence-action@v1
+    - uses: andstor/file-existence-action@v3
       with:
         files: cc/_site/index.html
