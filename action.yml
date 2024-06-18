@@ -47,7 +47,7 @@ runs:
         ! verlte "$2" "$1"
       }
 
-      METANORMA_VERSION=$(${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} metanorma --version | head -1 | cut -d' ' -f2)
+      METANORMA_VERSION=$(cd ${{ inputs.source-path }}; ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} metanorma --version | head -1 | cut -d' ' -f2)
       METANORMA_LEGACY=$(verlt ${METANORMA_VERSION} 1.10.0 && echo "true" || echo "false")
       METANORMA_FLAGS=""
 
