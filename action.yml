@@ -17,7 +17,7 @@ inputs:
     default: '' # false
   install-fonts:
     description: 'Install missing fonts'
-    default: 'false'
+    default: 'true'
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
