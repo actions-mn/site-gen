@@ -61,21 +61,22 @@ runs:
         METANORMA_FLAGS+=" --agree-to-terms"
       fi
 
-      if [ "${{ inputs.install-fonts }}" != 'true' ]; then
-        METANORMA_FLAGS+=" --no-install-fonts"
-      elif [ "$METANORMA_LEGACY" == "true" ]; then
-        METANORMA_FLAGS+=" --no-no-install-fonts"
+      if [ "${{ inputs.install-fonts }}" == "true" ]; then
+        if [ "$METANORMA_LEGACY" == "true" ]; then
+          METANORMA_FLAGS+=" --no-no-install-fonts"
+        else
+          METANORMA_FLAGS+=" --install-fonts"
+        fi
       else
-        METANORMA_FLAGS+=" --install-fonts"
+        METANORMA_FLAGS+=" --no-install-fonts"
       fi
 
-      if [ "${{ inputs.continue-without-fonts }}" != 'true' ]; then
-        METANORMA_FLAGS+=" --no-continue-without-fonts"
-      elif [ "$METANORMA_LEGACY" == "true" ]; then
-        METANORMA_FLAGS+=" --no-no-continue-without-fonts"
-      else
+      if [ "${{ inputs.continue-without-fonts }}" == "true" ]; then
         METANORMA_FLAGS+=" --continue-without-fonts"
+      else
+        METANORMA_FLAGS+=" --no-continue-without-fonts"
       fi
+
       echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
 
   - shell: bash

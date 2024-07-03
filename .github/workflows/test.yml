@@ -47,10 +47,26 @@ jobs:
       with:
         files: cc/_site/index.html
 
-  test-prior-1-10:
+  test-docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - image: metanorma/metanorma:1.9.7
+          install-fonts: true
+          continue-without-fonts: false
+        - image: metanorma/metanorma:1.10.0
+          install-fonts: true
+          continue-without-fonts: false
+        - image: metanorma/metanorma:1.9.7
+          install-fonts: false
+          continue-without-fonts: true
+        - image: metanorma/metanorma:1.10.0
+          install-fonts: false
+          continue-without-fonts: true
     container:
-      image: metanorma/metanorma:1.9.7
+      image: ${{ matrix.image }}
     steps:
     - uses: actions/checkout@v4
 
@@ -63,28 +79,8 @@ jobs:
       with:
         source-path: cc
         agree-to-terms: true
-        progress: true
-
-    - uses: andstor/file-existence-action@v3
-      with:
-        files: cc/_site/index.html
-
-  test-1-10:
-    runs-on: ubuntu-latest
-    container:
-      image: metanorma/metanorma:1.10.0
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: actions/checkout@v4
-      with:
-        repository: metanorma/mn-samples-cc
-        path: cc
-
-    - uses: ./
-      with:
-        source-path: cc
-        agree-to-terms: true
+        install-fonts: ${{ matrix.install-fonts }}
+        continue-without-fonts: ${{ matrix.continue-without-fonts }}
 
     - uses: andstor/file-existence-action@v3
       with:
