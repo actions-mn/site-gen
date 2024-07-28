@@ -30,6 +30,9 @@ inputs:
   use-bundler:
     description: 'Run in bundler'
     default: '' # false
+  timestamps:
+    description: 'Do timestamps to logs'
+    default: '' # false
   # stylesheet:
   #   description: 'Stylesheet file path for rendering HTML page'
   # template-dir:
@@ -75,6 +78,10 @@ runs:
         METANORMA_FLAGS+=" --continue-without-fonts"
       else
         METANORMA_FLAGS+=" --no-continue-without-fonts"
+      fi
+
+      if [ "${{ inputs.timestamps }}" == "true" ]; then
+        METANORMA_FLAGS+=" | ts '[%m-%d-%Y %H:%M:%.S]'"
       fi
 
       echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
