@@ -65,6 +65,10 @@ jobs:
         - image: metanorma/metanorma:1.10.0
           install-fonts: false
           continue-without-fonts: true
+        - image: metanorma/metanorma:1.9.7
+          install-fonts: true
+          continue-without-fonts: false
+          timestamps: true
     container:
       image: ${{ matrix.image }}
     steps:
@@ -81,6 +85,7 @@ jobs:
         agree-to-terms: true
         install-fonts: ${{ matrix.install-fonts }}
         continue-without-fonts: ${{ matrix.continue-without-fonts }}
+        timestamps: ${{ matrix.timestamps }}
 
     - uses: andstor/file-existence-action@v3
       with:
