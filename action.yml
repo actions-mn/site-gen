@@ -81,19 +81,18 @@ runs:
       fi
 
       if [ "${{ inputs.timestamps }}" == "true" ]; then
-        METANORMA_FLAGS+=" | mn_timestamp"
+        echo '#!/bin/bash
+        while IFS= read -r line; do
+          echo $(date +"%Y-%m-%d %H:%M:%S") - $line
+        done' > /usr/local/bin/mn_ts.sh
+        chmod +x /usr/local/bin/mn_ts.sh
+        METANORMA_FLAGS+=" | mn_ts.sh"
       fi
 
       echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
 
   - shell: bash
     run: |
-      mn_timestamp() {
-        while IFS= read -r line; do
-            echo "$(date +'%Y-%m-%d %H:%M:%S') - $line"
-        done
-      }
-
       cd ${{ inputs.source-path }}
       ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
         metanorma site generate .                                      \
