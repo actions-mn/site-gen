@@ -53,19 +53,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - image: metanorma/metanorma:1.9.7
-          install-fonts: true
-          continue-without-fonts: false
-        - image: metanorma/metanorma:1.10.0
-          install-fonts: true
-          continue-without-fonts: false
-        - image: metanorma/metanorma:1.9.7
+        - image: metanorma/metanorma:latest
           install-fonts: false
           continue-without-fonts: true
-        - image: metanorma/metanorma:1.10.0
-          install-fonts: false
-          continue-without-fonts: true
-        - image: metanorma/metanorma:1.9.7
+        - image: metanorma/metanorma:latest
           install-fonts: true
           continue-without-fonts: false
           timestamps: true

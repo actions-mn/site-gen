@@ -50,7 +50,15 @@ runs:
         ! verlte "$2" "$1"
       }
 
-      METANORMA_VERSION=$(cd ${{ inputs.source-path }}; ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} metanorma --version | head -1 | cut -d' ' -f2)
+      # Determine the correct metanorma command based on platform
+      if [[ "$RUNNER_OS" == "Windows" ]]; then
+        METANORMA_CMD="metanorma.exe"
+      else
+        METANORMA_CMD="metanorma"
+      fi
+      echo "Using metanorma command: $METANORMA_CMD"
+
+      METANORMA_VERSION=$(cd ${{ inputs.source-path }}; ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} $METANORMA_CMD --version | head -1 | cut -d' ' -f2)
       METANORMA_LEGACY=$(verlt ${METANORMA_VERSION} 1.10.0 && echo "true" || echo "false")
       METANORMA_FLAGS=""
 
@@ -90,12 +98,13 @@ runs:
       fi
 
       echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
+      echo "METANORMA_CMD=${METANORMA_CMD}" >> $GITHUB_ENV
 
   - shell: bash
     run: |
       cd ${{ inputs.source-path }}
       ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
-        metanorma site generate .                                      \
+        ${{ env.METANORMA_CMD }} site generate .                       \
         -o ${{ inputs.output-dir }}                                    \
         -c ${{ inputs.config-file }}                                   \
         ${{ env.METANORMA_FLAGS }}
