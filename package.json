@@ -1,0 +1,56 @@
+{
+  "name": "metanorma-site-generate",
+  "version": "2.0.0",
+  "description": "Generate a Metanorma site from source documents",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc && ncc build src/main.ts --out dist --minify",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "lint": "eslint src",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actions-mn/site-gen.git"
+  },
+  "keywords": [
+    "github",
+    "actions",
+    "metanorma"
+  ],
+  "author": "actions-mn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/actions-mn/site-gen/issues"
+  },
+  "homepage": "https://github.com/actions-mn/site-gen#readme",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/io": "^1.1.3"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.0.0",
+    "@types/node": "^24.x",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vercel/ncc": "^0.38.4",
+    "eslint": "^9.18.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-github": "^6.0.0",
+    "eslint-plugin-i18n-text": "^1.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-no-only-tests": "^3.3.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8"
+  }
+}

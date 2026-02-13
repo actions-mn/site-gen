@@ -9,12 +9,15 @@ on:
         required: true
         default: 'v2'
 
+permissions:
+  contents: write
+
 jobs:
   retag:
     name: Re-tag
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - run: |
         git push origin :refs/tags/${{ inputs.tag }}
