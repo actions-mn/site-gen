@@ -1,22 +1,21 @@
-import * as core from '@actions/core';
-import * as inputHelper from './input-helper';
-import * as metanormaProvider from './metanorma-provider';
+import { setFailed, setOutput } from '@actions/core';
+import { getInputs } from './input-helper.js';
+import { getSource } from './metanorma-provider.js';
 
 async function run(): Promise<void> {
   try {
     // Get inputs
-    const settings = await inputHelper.getInputs();
+    const settings = await getInputs();
 
     // Execute metanorma
-    await metanormaProvider.getSource(settings);
+    await getSource(settings);
 
     // Set outputs
-    core.setOutput('site-path', settings.sourcePath);
-    core.setOutput('config-used', settings.configFile);
+    setOutput('site-path', settings.sourcePath);
+    setOutput('config-used', settings.configFile);
   } catch (error) {
-    core.setFailed(
-      `Metanorma site generation failed: ${(error as any)?.message ?? error}`
-    );
+    const message = error instanceof Error ? error.message : String(error);
+    setFailed(`Metanorma site generation failed: ${message}`);
   }
 }
 

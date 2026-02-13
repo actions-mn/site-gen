@@ -1,16 +1,16 @@
-import * as core from '@actions/core';
-import * as path from 'path';
-import * as fsHelper from './fs-helper';
-import type { IMetanormaSettings } from './metanorma-settings';
-import { MetanormaCommandManager } from './metanorma-command-manager';
+import { info, setOutput } from '@actions/core';
+import { resolve } from 'path';
+import { directoryExistsSync } from './fs-helper.js';
+import type { IMetanormaSettings } from './metanorma-settings.js';
+import { MetanormaCommandManager } from './metanorma-command-manager.js';
 
 export async function getSource(settings: IMetanormaSettings): Promise<void> {
   // Validate paths
-  const absoluteSourcePath = path.resolve(
+  const absoluteSourcePath = resolve(
     settings.workspacePath,
     settings.sourcePath
   );
-  if (!fsHelper.directoryExistsSync(absoluteSourcePath, true)) {
+  if (!directoryExistsSync(absoluteSourcePath, true)) {
     throw new Error(`Source path does not exist: ${absoluteSourcePath}`);
   }
 
@@ -20,12 +20,12 @@ export async function getSource(settings: IMetanormaSettings): Promise<void> {
   // Get version
   const version = await commandManager.getVersion();
   settings.metanormaVersion = version.toString();
-  core.info(`Metanorma version: ${version}`);
+  info(`Metanorma version: ${version}`);
 
   // Execute
   await commandManager.execute(version);
 
   // Set outputs
-  core.setOutput('metanorma-version', version.toString());
-  core.info('Metanorma site generation completed successfully');
+  setOutput('metanorma-version', version.toString());
+  info('Metanorma site generation completed successfully');
 }

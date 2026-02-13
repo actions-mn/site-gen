@@ -1,7 +1,8 @@
-import * as exec from '@actions/exec';
-import * as core from '@actions/core';
-import type { IMetanormaSettings } from './metanorma-settings';
-import { Version, MINIMUM_MODERN_VERSION } from './version-helper';
+import { exec } from '@actions/exec';
+import { info, exportVariable } from '@actions/core';
+import type { IMetanormaSettings } from './metanorma-settings.js';
+import { Version, MINIMUM_MODERN_VERSION } from './version-helper.js';
+import type { ExecListeners } from '@actions/exec';
 
 export class MetanormaCommandManager {
   constructor(private readonly settings: IMetanormaSettings) {}
@@ -14,7 +15,7 @@ export class MetanormaCommandManager {
       ? ['bundle', 'exec', cmd, '--version']
       : [cmd, '--version'];
 
-    await exec.exec(versionCmd[0], versionCmd.slice(1), {
+    await exec(versionCmd[0], versionCmd.slice(1), {
       listeners: {
         stdout: (data: Buffer) => {
           output += data.toString();
@@ -96,22 +97,22 @@ export class MetanormaCommandManager {
       this.settings.configFile
     );
 
-    core.info(`Executing: ${cmdArray.join(' ')}`);
+    info(`Executing: ${cmdArray.join(' ')}`);
 
     const workDir = this.settings.sourcePath;
 
     // Prepare listeners with timestamp support
-    const listeners = this.settings.timestamps
+    const listeners: ExecListeners = this.settings.timestamps
       ? this.createTimestampListeners()
       : {};
 
     if (this.settings.useBundler) {
-      await exec.exec('bundle', ['exec', ...cmdArray], {
+      await exec('bundle', ['exec', ...cmdArray], {
         cwd: workDir,
         listeners
       });
     } else {
-      await exec.exec(cmdArray[0], cmdArray.slice(1), {
+      await exec(cmdArray[0], cmdArray.slice(1), {
         cwd: workDir,
         listeners
       });
@@ -119,9 +120,9 @@ export class MetanormaCommandManager {
 
     // Export command and flags to GITHUB_ENV for debugging (like v1)
     const cmd = this.getCommand();
-    core.exportVariable('METANORMA_CMD', cmd);
+    exportVariable('METANORMA_CMD', cmd);
     const flags = cmdArray.slice(1).join(' ');
-    core.exportVariable('METANORMA_FLAGS', flags);
+    exportVariable('METANORMA_FLAGS', flags);
   }
 
   private getCommand(): string {
@@ -129,7 +130,7 @@ export class MetanormaCommandManager {
     return isWindows ? 'metanorma.exe' : 'metanorma';
   }
 
-  private createTimestampListeners(): exec.ExecListeners {
+  private createTimestampListeners(): ExecListeners {
     const addTimestamp = (data: Buffer): string => {
       const lines = data.toString().split('\n');
       return lines
