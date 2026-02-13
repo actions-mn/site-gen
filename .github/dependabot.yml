@@ -1,0 +1,18 @@
+---
+version: 2
+
+updates:
+- package-ecosystem: "npm"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  groups:
+    minor-npm-dependencies:
+      update-types: [minor, patch]
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  groups:
+    minor-actions-dependencies:
+      update-types: [minor, patch]
