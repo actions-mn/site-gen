@@ -1,6 +1,6 @@
-import * as core from '@actions/core';
-import * as path from 'path';
-import type { IMetanormaSettings } from './metanorma-settings';
+import { getInput } from '@actions/core';
+import { resolve } from 'path';
+import type { IMetanormaSettings } from './metanorma-settings.js';
 
 export async function getInputs(): Promise<IMetanormaSettings> {
   const result: IMetanormaSettings = {
@@ -26,23 +26,23 @@ export async function getInputs(): Promise<IMetanormaSettings> {
 }
 
 function getSourcePath(): string {
-  const input = core.getInput('source-path') || '.';
+  const input = getInput('source-path') || '.';
   return validatePath(input, 'source-path');
 }
 
 function getOutputDir(): string {
-  const input = core.getInput('output-dir') || '_site';
+  const input = getInput('output-dir') || '_site';
   return validatePath(input, 'output-dir');
 }
 
 function getConfigFile(): string {
-  const input = core.getInput('config-file') || 'metanorma.yml';
+  const input = getInput('config-file') || 'metanorma.yml';
   validateFilename(input, 'config-file');
   return input;
 }
 
 function getBooleanInput(name: string): boolean {
-  const value = core.getInput(name) || 'false';
+  const value = getInput(name) || 'false';
   if (value !== 'true' && value !== 'false') {
     throw new Error(`Invalid boolean value for ${name}: ${value}`);
   }
@@ -54,7 +54,7 @@ function getWorkspacePath(): string {
   if (!workspacePath) {
     throw new Error('GITHUB_WORKSPACE not defined');
   }
-  return path.resolve(workspacePath);
+  return resolve(workspacePath);
 }
 
 export function validatePath(input: string, paramName: string): string {

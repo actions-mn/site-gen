@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validatePath, validateFilename } from '../src/input-helper';
+import { validatePath, validateFilename } from '../src/input-helper.js';
 
 describe('Input Validation', () => {
   describe('validatePath', () => {

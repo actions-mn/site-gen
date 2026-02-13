@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Version, MINIMUM_MODERN_VERSION } from '../src/version-helper';
+import { Version, MINIMUM_MODERN_VERSION } from '../src/version-helper.js';
 
 describe('Version', () => {
   describe('parse', () => {

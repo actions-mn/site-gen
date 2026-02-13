@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { MetanormaCommandManager } from '../src/metanorma-command-manager';
-import { Version } from '../src/version-helper';
-import { IMetanormaSettings } from '../src/metanorma-settings';
+import { MetanormaCommandManager } from '../src/metanorma-command-manager.js';
+import { Version } from '../src/version-helper.js';
+import type { IMetanormaSettings } from '../src/metanorma-settings.js';
 
 describe('MetanormaCommandManager', () => {
   const createSettings = (
