@@ -1,110 +1,60 @@
 name: 'metanorma-site-generate'
-description: 'Perform metanorma site generate'
+description: 'Generate a Metanorma site from source documents with comprehensive configuration options'
+author: 'actions-mn'
+branding:
+  icon: 'file-text'
+  color: 'blue'
+
 inputs:
   source-path:
-    description: Source path, usually directory where configuration
-      (manifest) file is
+    description: 'Source path containing the configuration (manifest) file and documents'
+    required: false
     default: '.'
   output-dir:
-    description: Output directory for the generated site
-    default: _site
+    description: 'Output directory for the generated site'
+    required: false
+    default: '_site'
   config-file:
-    description: 'Metanorma configuration (manifest) file'
-    default: metanorma.yml
+    description: 'Metanorma configuration (manifest) file name'
+    required: false
+    default: 'metanorma.yml'
   agree-to-terms:
-    description: 'Agree / Disagree with all third-party licensing terms
-      presented (WARNING: do know what you are agreeing with!)'
-    default: '' # false
+    description: 'Agree to all third-party licensing terms (WARNING: ensure you understand what you are agreeing to!)'
+    required: false
+    default: 'false'
   install-fonts:
-    description: 'Install missing fonts'
+    description: 'Install missing fonts automatically'
+    required: false
     default: 'true'
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
-    default: '' # false
+    required: false
+    default: 'false'
   strict:
-    description: 'Run metanorma in strict mode'
-    default: '' # false
+    description: 'Run metanorma in strict mode (fail on warnings)'
+    required: false
+    default: 'false'
   progress:
-    description: 'Display progress related logs'
-    default: 'false' # false
+    description: 'Display progress-related logs during processing'
+    required: false
+    default: 'false'
   use-bundler:
-    description: 'Run in bundler'
-    default: '' # false
+    description: 'Use bundler to execute metanorma (required if installed via bundle)'
+    required: false
+    default: 'false'
   timestamps:
-    description: 'Do timestamps to logs'
-    default: '' # false
-  # stylesheet:
-  #   description: 'Stylesheet file path for rendering HTML page'
-  # template-dir:
-  #   description: 'Liquid template directory to render site design'
+    description: 'Add timestamps to log output'
+    required: false
+    default: 'false'
+
+outputs:
+  site-path:
+    description: 'Path to the generated site directory'
+  config-used:
+    description: 'Configuration file that was used'
+  metanorma-version:
+    description: 'Version of metanorma that was used'
 
 runs:
-  using: "composite"
-  steps:
-  - shell: bash
-    run: |
-      verlte() {
-        printf '%s\n' "$1" "$2" | sort -C -V
-      }
-      verlt() {
-        ! verlte "$2" "$1"
-      }
-
-      # Determine the correct metanorma command based on platform
-      if [[ "$RUNNER_OS" == "Windows" ]]; then
-        METANORMA_CMD="metanorma.exe"
-      else
-        METANORMA_CMD="metanorma"
-      fi
-      echo "Using metanorma command: $METANORMA_CMD"
-
-      METANORMA_VERSION=$(cd ${{ inputs.source-path }}; ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }} $METANORMA_CMD --version | head -1 | cut -d' ' -f2)
-      METANORMA_LEGACY=$(verlt ${METANORMA_VERSION} 1.10.0 && echo "true" || echo "false")
-      METANORMA_FLAGS=""
-
-      if [ "${{ inputs.strict }}" == "true" ]; then
-        METANORMA_FLAGS+="--strict"
-      fi
-      if [ "${{ inputs.progress }}" != "true" ]; then
-        METANORMA_FLAGS+=" --no-progress"
-      fi
-      if [ "${{ inputs.agree-to-terms }}" == "true" ]; then
-        METANORMA_FLAGS+=" --agree-to-terms"
-      fi
-
-      if [ "${{ inputs.install-fonts }}" == "true" ]; then
-        if [ "$METANORMA_LEGACY" == "true" ]; then
-          METANORMA_FLAGS+=" --no-no-install-fonts"
-        else
-          METANORMA_FLAGS+=" --install-fonts"
-        fi
-      else
-        METANORMA_FLAGS+=" --no-install-fonts"
-      fi
-
-      if [ "${{ inputs.continue-without-fonts }}" == "true" ]; then
-        METANORMA_FLAGS+=" --continue-without-fonts"
-      else
-        METANORMA_FLAGS+=" --no-continue-without-fonts"
-      fi
-
-      if [ "${{ inputs.timestamps }}" == "true" ]; then
-        echo '#!/bin/bash
-        while IFS= read -r line; do
-          echo $(date +"%Y-%m-%d %H:%M:%S") - $line
-        done' > /usr/local/bin/mn_ts.sh
-        chmod +x /usr/local/bin/mn_ts.sh
-        METANORMA_FLAGS+=" | mn_ts.sh"
-      fi
-
-      echo "METANORMA_FLAGS=${METANORMA_FLAGS}" >> $GITHUB_ENV
-      echo "METANORMA_CMD=${METANORMA_CMD}" >> $GITHUB_ENV
-
-  - shell: bash
-    run: |
-      cd ${{ inputs.source-path }}
-      ${{ inputs.use-bundler == 'true' && 'bundle exec' || '' }}       \
-        ${{ env.METANORMA_CMD }} site generate .                       \
-        -o ${{ inputs.output-dir }}                                    \
-        -c ${{ inputs.config-file }}                                   \
-        ${{ env.METANORMA_FLAGS }}
+  using: 'node24'
+  main: 'dist/index.js'

@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# Build outputs (keep dist/ for GitHub Actions)
+lib/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+*.log
+
+# Temporary files
+*.tmp
