@@ -15,7 +15,9 @@ describe('File System Helper', () => {
 
   describe('directoryExistsSync', () => {
     it('should return true when directory exists', () => {
-      const existsSpy = vi.spyOn({ existsSync }, 'existsSync').mockReturnValue(true);
+      const existsSpy = vi
+        .spyOn({ existsSync }, 'existsSync')
+        .mockReturnValue(true);
       const statSpy = vi.spyOn({ statSync }, 'statSync').mockReturnValue({
         isDirectory: () => true
       } as Stats);
@@ -31,7 +33,9 @@ describe('File System Helper', () => {
     });
 
     it('should return false when directory does not exist (not required)', () => {
-      const existsSpy = vi.spyOn({ existsSync }, 'existsSync').mockReturnValue(false);
+      const existsSpy = vi
+        .spyOn({ existsSync }, 'existsSync')
+        .mockReturnValue(false);
 
       const result = directoryExistsSync('/nonexistent/path', false);
 
@@ -42,7 +46,9 @@ describe('File System Helper', () => {
     });
 
     it('should throw when directory does not exist (required)', () => {
-      const existsSpy = vi.spyOn({ existsSync }, 'existsSync').mockReturnValue(false);
+      const existsSpy = vi
+        .spyOn({ existsSync }, 'existsSync')
+        .mockReturnValue(false);
 
       expect(() => directoryExistsSync('/nonexistent/path', true)).toThrow(
         'Directory does not exist: /nonexistent/path'
@@ -52,7 +58,9 @@ describe('File System Helper', () => {
     });
 
     it('should throw when path exists but is not a directory', () => {
-      const existsSpy = vi.spyOn({ existsSync }, 'existsSync').mockReturnValue(true);
+      const existsSpy = vi
+        .spyOn({ existsSync }, 'existsSync')
+        .mockReturnValue(true);
       const statSpy = vi.spyOn({ statSync }, 'statSync').mockReturnValue({
         isDirectory: () => false
       } as Stats);
