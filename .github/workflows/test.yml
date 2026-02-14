@@ -13,48 +13,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  lint-test:
+    uses: actions-mn/shared/.github/workflows/lint-test.yml@main
+    with:
+      run-lint: true
+
+  lint-action-yaml:
     name: Lint Action YAML
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - run: |
           sudo apt-get install yamllint
           yamllint action.yml
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24.x'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Format check
-        run: npm run format-check
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Unit tests
-        run: npm test
-
-      - name: Verify dist integrity
-        run: |
-          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build"
-            git diff
-            exit 1
-          fi
 
   test:
     strategy:
@@ -62,7 +33,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-14, macos-15, macos-15-intel, macos-26, windows-2022, windows-2025]
     runs-on: ${{ matrix.os }}
-    needs: build
+    needs: lint-test
 
     steps:
       - name: Checkout
@@ -111,7 +82,7 @@ jobs:
             strict: false
             progress: false
     runs-on: ${{ matrix.os }}
-    needs: build
+    needs: lint-test
 
     steps:
       - name: Checkout
@@ -166,7 +137,7 @@ jobs:
 
   test-docker:
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint-test
     strategy:
       fail-fast: false
       matrix:
@@ -205,7 +176,7 @@ jobs:
 
   test-input-validation:
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint-test
 
     steps:
       - uses: actions/checkout@v6
@@ -244,10 +215,11 @@ jobs:
 
   test-timestamps:
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint-test
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Checkout test data
         uses: actions/checkout@v6
