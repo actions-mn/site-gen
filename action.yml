@@ -29,7 +29,7 @@ inputs:
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     required: false
-    default: 'false'
+    default: 'true'
   strict:
     description: 'Run metanorma in strict mode (fail on warnings)'
     required: false
