@@ -21,6 +21,30 @@ describe('MetanormaCommandManager', () => {
     ...overrides
   });
 
+  describe('getCommand', () => {
+    it('should not append .exe under bundler on windows', async () => {
+      const descriptor = Object.getOwnPropertyDescriptor(process, 'platform');
+      Object.defineProperty(process, 'platform', { value: 'win32' });
+      try {
+        const version = new Version(1, 10, 0);
+
+        const bundled = await new MetanormaCommandManager(
+          createSettings({ useBundler: true })
+        ).getSiteGenerateCommand(version, '_site', 'metanorma.yml');
+        expect(bundled[0]).toBe('metanorma');
+
+        const standalone = await new MetanormaCommandManager(
+          createSettings({ useBundler: false })
+        ).getSiteGenerateCommand(version, '_site', 'metanorma.yml');
+        expect(standalone[0]).toBe('metanorma.exe');
+      } finally {
+        Object.defineProperty(process, 'platform', {
+          value: descriptor?.value
+        });
+      }
+    });
+  });
+
   describe('getSiteGenerateCommand', () => {
     it('should build command with modern version flags', async () => {
       const manager = new MetanormaCommandManager(

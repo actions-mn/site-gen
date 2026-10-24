@@ -126,6 +126,13 @@ export class MetanormaCommandManager {
   }
 
   private getCommand(): string {
+    // Under bundler the command must be the gem binstub name: bundler
+    // resolves `metanorma` to the `metanorma.bat` wrapper RubyGems
+    // generates on Windows, and there is no `metanorma.exe`. The .exe
+    // suffix only applies to the standalone metanorma distribution.
+    if (this.settings.useBundler) {
+      return 'metanorma';
+    }
     const isWindows = process.platform === 'win32';
     return isWindows ? 'metanorma.exe' : 'metanorma';
   }
